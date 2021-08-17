@@ -2,20 +2,36 @@
 
 public class CarController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Tốc độ của xe
+
+    public float speed;
+    public float turnSpeed;
+    public float horizontalInput;
+
+    public float forwardInput;
+
     void Start()
     {
-        RunWithLog("Start");
-    }
+        // Start dùng để khởi tạo trước lúc vào game
 
-    // Update is called once per frame
+        speed = 10;
+        turnSpeed = 30;
+    }
+    
     void Update()
     {
-        transform.Translate(new Vector3(0, 0, 0.1f));
-    }
-
-    private void RunWithLog(string data)
-    {
-        Debug.Log(data);
+        // Cập nhật run-time trong game.
+        
+        // Lấy thông số khi nhấn vào nút trái/phải
+        horizontalInput = Input.GetAxis("Horizontal");
+        
+        // Lấy thông số khi nhấn vào nút tiến/lùi
+        forwardInput = Input.GetAxis("Vertical");
+        
+        // Di chuyển xe dựa vào forward input
+        transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
+       
+        // Xoay xe dựa vào horizon input
+        transform.Rotate(Vector3.up, turnSpeed * horizontalInput * Time.deltaTime);
     }
 }
