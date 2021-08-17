@@ -1,37 +1,34 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    // Tốc độ của xe
+    // Rigidbody có tác dụng điều khiển vị trí của vật thể thông qua hệ thống mô phỏng vật lý của Unity,
+    // không cần bất kỳ script nào nó cũng có thể di chuyển và xử lý hướng khi va chạm (nếu có Collider)
+
+    public Rigidbody carRigidBody;
 
     public float speed;
-    public float turnSpeed;
-    public float horizontalInput;
 
-    public float forwardInput;
+    public float speedInput;
 
-    void Start()
-    {
-        // Start dùng để khởi tạo trước lúc vào game
-
-        speed = 10;
-        turnSpeed = 30;
-    }
+    private float turnStrength = 180;
     
-    void Update()
+    public void Update()
     {
-        // Cập nhật run-time trong game.
-        
-        // Lấy thông số khi nhấn vào nút trái/phải
-        horizontalInput = Input.GetAxis("Horizontal");
-        
-        // Lấy thông số khi nhấn vào nút tiến/lùi
-        forwardInput = Input.GetAxis("Vertical");
-        
-        // Di chuyển xe dựa vào forward input
-        transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
-       
-        // Xoay xe dựa vào horizon input
-        transform.Rotate(Vector3.up, turnSpeed * horizontalInput * Time.deltaTime);
+        // Tốc độ tiến/ lùi
+        speedInput = Input.GetAxis("Vertical") * speed * 1000;
+
+        // Tốc độ xoay
+        var turnInput = Input.GetAxis("Horizontal");
+
+        transform.rotation =
+            Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, turnInput * turnStrength * Time.deltaTime * speedInput, 0));
+    }
+
+    private void FixedUpdate()
+    {
+        if (Mathf.Abs(speedInput) > 0)
+            carRigidBody.AddForce(transform.forward * speedInput);
     }
 }

@@ -1,16 +1,11 @@
 # RacingGame2021
 
-Buổi 3
+Buổi 4
 
 Tính năng mới.
-1. Camera follows the vehicle
-2. Người dùng bấm nút lên/xuống, xe sẽ di chuyển tiền hoặc lùi
-3. Người dùng bấm mũi tên trái/phải xe sẽ đổi hướng
+1. Sử dụng vật lý cho xe di chuyển
 
 Các khái niệm và kỹ năng mới
-1. Variables ( biến )
-2. Data types ( kiểu dữ liệu )
-3. Khai báo và khởi tạo các biến
-4. Empty Object
-5. Get user input
-6. Translate and Rotate
+1. Rigidbody
+2. AddForce
+3. Rotation
