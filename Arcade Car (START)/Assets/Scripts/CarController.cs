@@ -8,27 +8,66 @@ public class CarController : MonoBehaviour
 
     public Rigidbody carRigidBody;
 
-    public float speed;
+    public float forward = 8, reverse = 4, maxSpeed = 50, turnStrength = 180, gravityForce = 10f;
 
-    public float speedInput;
+    private float turnInput, speedInput;
 
-    private float turnStrength = 180;
-    
+    private bool grounded;
+
+    public LayerMask isGround;
+    public float groundRayLength = 0.5f;
+    public Transform groundRayPoint;
+
+    private void Start()
+    {
+        carRigidBody.transform.parent = null;
+    }
+
     public void Update()
     {
         // Tốc độ tiến/ lùi
-        speedInput = Input.GetAxis("Vertical") * speed * 1000;
+
+        speedInput = 0;
+        var verticalInput = Input.GetAxis("Vertical");
+
+        if (verticalInput > 0)
+            speedInput = verticalInput * forward * 1000;
+        else if (verticalInput < 0)
+            speedInput = verticalInput * reverse * 1000;
 
         // Tốc độ xoay
-        var turnInput = Input.GetAxis("Horizontal");
+        turnInput = Input.GetAxis("Horizontal");
 
-        transform.rotation =
-            Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, turnInput * turnStrength * Time.deltaTime * speedInput, 0));
+        if (grounded)
+        {
+            transform.rotation =
+                Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0,
+                    turnInput * turnStrength * Time.deltaTime * verticalInput, 0));
+        }
+
+        transform.position = carRigidBody.transform.position;
     }
 
     private void FixedUpdate()
     {
-        if (Mathf.Abs(speedInput) > 0)
-            carRigidBody.AddForce(transform.forward * speedInput);
+        grounded = false;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(groundRayPoint.position, -transform.up, out hit, groundRayLength, isGround))
+        {
+            grounded = true;
+        }
+
+        if (grounded)
+        {
+            if (Mathf.Abs(speedInput) > 0)
+                carRigidBody.AddForce(transform.forward * speedInput);
+        }
+        else
+        {
+            carRigidBody.AddForce(Vector3.up * -gravityForce * 100f);
+        }
+
     }
 }
